@@ -6,11 +6,13 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 )
 
 var addr = flag.String("maddr", "127.0.0.1:11211", "The host and listening port of the memcached server.")
-
+var poolSize = flag.Int("poolsize", 4096, "The connection pool size to the memcached server")
 var pool *Pool // The memcached connection pool
+var debug bool
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	post, err := ioutil.ReadAll(r.Body) //Read the http body
@@ -68,11 +70,14 @@ Handler404:
 }
 
 func main() {
+	go DumpStat()
+	log.SetFlags(log.Lshortfile | log.Ldate | log.Ltime)
 	flag.Parse()
-	pool = New(*addr)
+	pool = New(*addr, *poolSize)
 	if pool == nil {
-		log.Fatal("Connect memcached failed : %v\n", *addr)
+		log.Fatalf("Connect memcached failed : %v\n", *addr)
 	}
 	http.HandleFunc("/memcached", handler)
+	http.HandleFunc("/debug", DebugHandler)
 	log.Fatal(http.ListenAndServe(":8091", nil))
 }

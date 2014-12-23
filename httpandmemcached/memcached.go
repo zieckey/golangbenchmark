@@ -12,15 +12,14 @@ type Pool struct {
 	count int32 // The total count of the memcached connections
 }
 
-func New(addr string) *Pool {
+func New(addr string, size int) *Pool {
 	pool := new(Pool)
-	StackSize := 128
 	pool.addr = addr
-	pool.stack = make(chan *gomemcache.Memcache, StackSize)
-	for i := 0; i < StackSize; i++ {
+	pool.stack = make(chan *gomemcache.Memcache, size)
+	for i := 0; i < size; i++ {
 		c, err := gomemcache.Dial(addr)
 		if err != nil {
-			fmt.Printf("Connect to %v failed\n", addr)
+			fmt.Printf("Connect to %v failed : %v\n", addr, err.Error())
 			return nil
 		}
 		pool.stack <- c
@@ -38,7 +37,7 @@ func (pool *Pool) Get() *gomemcache.Memcache {
 	default:
 		conn, err := gomemcache.Dial(pool.addr)
 		if err != nil {
-			fmt.Printf("Connect to %v failed\n", pool.addr)
+			fmt.Printf("Connect to %v failed : %v\n", pool.addr, err.Error())
 			return nil
 		}
 		//atomic.AddInt32(&pool.count, 1)
