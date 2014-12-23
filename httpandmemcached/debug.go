@@ -15,14 +15,12 @@ func DebugHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DumpStat() {
-	
 	plot := `===
 { "Name" : "line", "Height" : 600, "Width" : 1900, "ItemName" : ["HeapSys : bytes obtained from system", "HeapAlloc : bytes allocated and still in use", "HeapIdle : bytes in idle spans", "NumGC"] }
 ---
 `
-	
 	path := "memory.chart"
-	tty, err := os.OpenFile(path, os.O_CREATE|os.O_TRUNC, 0)
+	tty, err := os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0755)
 	if err != nil {
 		fmt.Printf("Open file %v failed %v\n", err.Error())
 		return
@@ -30,7 +28,7 @@ func DumpStat() {
 	defer func() {
 		tty.Close()
 	}()
-	
+
 	tty.Write([]byte(plot))
 	var m runtime.MemStats
 	j := 0
