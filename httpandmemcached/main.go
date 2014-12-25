@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sync/atomic"
 	_ "net/http/pprof"
 )
 
@@ -13,8 +14,11 @@ var addr = flag.String("maddr", "127.0.0.1:11211", "The host and listening port 
 var poolSize = flag.Int("poolsize", 4096, "The connection pool size to the memcached server")
 var pool *Pool // The memcached connection pool
 var debug bool
+var ReqTotal int32
+var ReqOK int32
 
 func handler(w http.ResponseWriter, r *http.Request) {
+	atomic.AddInt32(&ReqTotal, 1)
 	post, err := ioutil.ReadAll(r.Body) //Read the http body
 	if err != nil {
 		w.WriteHeader(403)
@@ -46,6 +50,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			goto Handler403
 		}
 
+		atomic.AddInt32(&ReqOK, 1)
 		w.Write(val)
 		return
 	}
@@ -58,6 +63,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		goto Handler403
 	}
+	atomic.AddInt32(&ReqOK, 1)
 	w.Write([]byte("STORED\r\n"))
 	return
 
