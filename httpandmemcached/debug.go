@@ -36,9 +36,7 @@ func DumpStat() {
 	for {
 		time.Sleep(time.Second)
 		runtime.ReadMemStats(&m)
-		total := atomic.SwapInt32(&ReqTotal, 0)
-		ok := atomic.SwapInt32(&ReqOK, 0)
-		fmt.Fprintf(tty, "%d %d %d %d %d %d %d\n", j, m.HeapSys, m.HeapAlloc, m.HeapIdle, m.NumGC, total, ok)
+		fmt.Fprintf(tty, "%d %d %d %d %d %d %d\n", j, m.HeapSys, m.HeapAlloc, m.HeapIdle, m.NumGC, ReqTotal, ReqOK)
 		j++
 	}
 }
