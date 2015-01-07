@@ -40,7 +40,7 @@ var stat Stat
 func main() {
 	flag.Parse()
 	var wg sync.WaitGroup
-	recoder := overall.NewTimeRecoder()
+	recoder := overall.NewTimeRecorder()
 	for c := 0; c < *concurrence; c++ {
 		go request(&wg, recoder)
 		wg.Add(1)
@@ -59,7 +59,7 @@ func main() {
 	}
 }
 
-func request(wg *sync.WaitGroup, record *overall.TimeRecoder) {
+func request(wg *sync.WaitGroup, record *overall.TimeRecorder) {
 	defer wg.Done()
 
 	addr, err := net.ResolveUDPAddr("udp", *hostPort)
