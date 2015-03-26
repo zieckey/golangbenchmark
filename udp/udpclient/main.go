@@ -95,7 +95,7 @@ func request(wg *sync.WaitGroup, record *overall.TimeRecorder) {
 		}
 
 		// recv data from server
-		data := make([]byte, 1472)
+		data := make([]byte, *messageLen)
 		read, remoteAddr, err := socket.ReadFromUDP(data)
 		if err != nil {
 			fmt.Println("recv data error ", err)
