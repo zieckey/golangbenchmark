@@ -16,7 +16,7 @@ func DebugHandler(w http.ResponseWriter, r *http.Request) {
 
 func DumpStat() {
 	plot := `===
-{ "Name" : "line", "Height" : 600, "Width" : 1900, "ItemName" : ["HeapSys : bytes obtained from system", "HeapAlloc : bytes allocated and still in use", "HeapIdle : bytes in idle spans", "NumGC"] }
+{ "Name" : "line", "Height" : 600, "Width" : 1900, "ItemName" : ["HeapSys : bytes obtained from system", "HeapAlloc : bytes allocated and still in use", "HeapIdle : bytes in idle spans", "NumGC", "ReqTotal", "ReqOK"] }
 ---
 `
 	path := "memory.chart"
@@ -35,7 +35,7 @@ func DumpStat() {
 	for {
 		time.Sleep(time.Second)
 		runtime.ReadMemStats(&m)
-		fmt.Fprintf(tty, "%d %d %d %d %d\n", j, m.HeapSys, m.HeapAlloc, m.HeapIdle, m.NumGC)
+		fmt.Fprintf(tty, "%d %d %d %d %d %d %d\n", j, m.HeapSys, m.HeapAlloc, m.HeapIdle, m.NumGC, ReqTotal, ReqOK)
 		j++
 	}
 }

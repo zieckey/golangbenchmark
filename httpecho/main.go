@@ -1,18 +1,18 @@
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"net/http"
-	"io/ioutil"
 )
 
 func proxyHandler(w http.ResponseWriter, r *http.Request) {
-    log.Println(r.Header)
+	log.Println(r.Header)
 	buf, err := ioutil.ReadAll(r.Body) //Read the http body
-    log.Printf("recv n=%v\n", len(buf))
+	log.Printf("recv n=%v\n", len(buf))
 	if err == nil {
 		w.Write(buf)
-        w.Write([]byte("<---backend--->"))
+		w.Write([]byte("<---backend--->"))
 		return
 	}
 
@@ -20,7 +20,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-    log.Println(r.Header)
+	log.Println(r.Header)
 	buf, err := ioutil.ReadAll(r.Body) //Read the http body
 	if err == nil {
 		w.Write(buf)
@@ -31,8 +31,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-    log.SetFlags(log.Lshortfile | log.Ldate | log.Ltime)
+	log.SetFlags(log.Lshortfile | log.Ldate | log.Ltime)
 	http.HandleFunc("/echo", handler)
 	http.HandleFunc("/proxyecho", proxyHandler)
+	http.HandleFunc("/proxyecho", handler)
 	log.Fatal(http.ListenAndServe(":8091", nil))
 }
