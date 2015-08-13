@@ -5,7 +5,6 @@ import (
 	"github.com/kklis/gomemcache"
 	"io/ioutil"
 	"log"
-    "fmt"
 	"net/http"
 	"sync/atomic"
 	_ "net/http/pprof"
@@ -27,7 +26,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// URI : /memcached?key=a
-	fmt.Printf("path=[%v] uri=[%v] query=[%v] method=[%s]\n", r.URL.Path, r.URL.String(), r.URL.RawQuery, r.Method)
+	log.Printf("path=[%v] uri=[%v] query=[%v] method=[%s]\n", r.URL.Path, r.URL.String(), r.URL.RawQuery, r.Method)
+	//The output of above : path=[/memcached] uri=[/memcached?key=a] query=[key=a] method=[GET]
 	if len(r.URL.RawQuery) <= 4 {
 		w.WriteHeader(403)
 		return
