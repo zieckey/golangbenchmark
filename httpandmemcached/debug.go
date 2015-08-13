@@ -5,7 +5,6 @@ import (
 	"time"
 	"fmt"
 	"runtime"
-	"sync/atomic"
 	"net/http"
 )
 
